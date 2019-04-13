@@ -1,8 +1,5 @@
 # Paper Note
 
-<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default"></script>
-
-
 [TOC]
 
 ## Skip N-grams and Ranking Functions for Predicting Script Events
