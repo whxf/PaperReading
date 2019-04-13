@@ -36,18 +36,11 @@
 
 公式3是average ranking，就是整合整个数据集所有链计算得到的```f(e,c)```进行平均，Recall@N就是计算数据集中```f(e,c)```小于某个阈值的事件占比。
 
-```math
-f(e,c)= \sum_{k=1}^{m}\log P(e|c_k) + \sum_{k=m+1}^{n}\log P(c_k|e)···(1)
-```
-```math
-P(e_1|e_2) = \frac{C(e_1,e_2)}{C(e_2)}···(2)
-```
-```math
-AverageRanking = \frac{1}{|C|}\sum_{c \in C} rank_{sys} (c)···(3)
-```
-```math
-Recall@N = \frac{1}{|C|} |\lbrace c:c \in C \wedge rank_{sys} (c) \leq N \rbrace|···(4)
-```
+
+$$f(e,c)= \sum_{k=1}^{m}\log P(e|c_k) + \sum_{k=m+1}^{n}\log P(c_k|e)....(1)$$
+$$P(e_1|e_2) = \frac{C(e_1,e_2)}{C(e_2)}....(2)$$
+$$AverageRanking = \frac{1}{|C|}\sum_{c \in C} rank_{sys} (c)....(3)$$
+$$Recall@N = \frac{1}{|C|} |\lbrace c:c \in C \wedge rank_{sys} (c) \leq N \rbrace|....(4)$$
 
 
 
