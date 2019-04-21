@@ -87,3 +87,41 @@ A=softmax({ W_{s2}}tanh(W_{s1}H^T))
 M=AH
 ```
 * penalization term：交叉熵
+
+
+***Attention and Self Attention：***
+
+详细参考：https://ldzhangyx.github.io/2018/10/14/self-attention/
+
+从代码的角度理解：attention中bmm的一行，计算了lstm output 和最后一个隐向量的相似度，然后进行softmax，得到attention；self attention中，对lstm output 自己进行了相似度计算，谈后得到了attention
+
+```
+    def _attention_net(self, lstm_output):
+        """
+        Self-Attention layer
+        :param lstm_output:
+        :return:
+        """
+        # SELF ATTENTION
+        attn_weight_matrix = self.W_s2(
+            torch.tanh(self.W_s1(lstm_output)))  # batch_size x sequence_len x r ( attention hop)
+        attn_weight_matrix = attn_weight_matrix.permute(0, 2, 1)  # batch_size x r x sequence_len
+        attn_weight_matrix = F.softmax(attn_weight_matrix, dim=2)
+        return attn_weight_matrix
+
+        # ATTENTION EXAMPLE
+        # input: lstm_output final_state(h_n)
+        # use single direction so num_layers * num_directions == 1
+        # final_state.size() = (num_layers * num_directions, batch, hidden_size)
+        # lstm_output.size() = (batch_size, num_seq, hidden_size)
+        # hidden.size() = (batch_size, hidden_size)
+        # attn_weights.size() = (batch_size, num_seq)
+        # soft_attn_weights.size() = (batch_size, num_seq)
+        # new_hidden_state.size() = (batch_size, hidden_size)
+        #
+        # hidden = final_state.squeeze(0)
+        # attn_weights = torch.bmm(lstm_output, hidden.unsqueeze(2)).squeeze(2)  # main difference toward self attention
+        # soft_attn_weights = F.softmax(attn_weights, 1)
+        # new_hidden_state = torch.bmm(lstm_output.transpose(1, 2), soft_attn_weights.unsqueeze(2)).squeeze(2)
+        # return new_hidden_state
+```
