@@ -52,9 +52,9 @@ Recall@N = \frac{1}{|C|} |\lbrace c:c \in C \wedge rank_{sys} (c) \leq N \rbrace
 
 原文链接：https://arxiv.org/abs/1703.03130
 
-***总结：*** 介绍了LSTM+Attention对句子进行分类的方法，self-attention？？感觉只是普通的attention，这里留有疑问
+***总结：*** 介绍了LSTM+SelfAttention对句子进行分类的方法
 
-***核心收获：*** 提供了方法构造的详细过程，主要通过学习这个来实现LSTM+Attention进行句子分类的模型
+***核心收获：*** 提供了方法构造的详细过程，主要通过学习这个来实现LSTM+SelfAttention进行句子分类的模型
 
 ***论文概述：***
 
