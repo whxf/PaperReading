@@ -32,10 +32,10 @@
 公式1是```score```函数，可以理解为，在一条事件链中取第m个为```miss event```，也就是需要预测的，根据公式2计算待选event和链中其他node的```P```值，然后```log```求和，算出score，score小的更好。
 
 公式3是average ranking，就是整合整个数据集所有链计算得到的```f(e,c)```进行平均，Recall@N就是计算数据集中```f(e,c)```小于某个阈值的事件占比。
-![1-1](http://github.com/whxf/PaperReading/blob/master/formula/1-1.png)
-![1-2](http://github.com/whxf/PaperReading/blob/master/formula/1-2.png)
-![1-3](http://github.com/whxf/PaperReading/blob/master/formula/1-3.png)
-![1-4](http://github.com/whxf/PaperReading/blob/master/formula/1-4.png)
+![1-1](formula/1-1.png)
+![1-2](formula/1-2.png)
+![1-3](formula/1-3.png)
+![1-4](formula/1-4.png)
 
 ## A Structured Self-Attentive Sentence Embedding
 
@@ -49,23 +49,23 @@
 
 * 词向量嵌入:(shape: n * d, d is embedding size, n is sentence length
 
-    ![2-1](http://github.com/whxf/PaperReading/blob/master/formula/2-1.png)
+    ![2-1](formula/2-1.png)
 
 * 双向LSTM：将前后向结果拼接(shape: n * 2u, u is hidden size)
 
-    ![2-2](http://github.com/whxf/PaperReading/blob/master/formula/2-2.png)
-    ![2-3](http://github.com/whxf/PaperReading/blob/master/formula/2-3.png)
-    ![2-4](http://github.com/whxf/PaperReading/blob/master/formula/2-4.png)
-    ![2-5](http://github.com/whxf/PaperReading/blob/master/formula/2-5.png)
+    ![2-2](formula/2-2.png)
+    ![2-3](formula/2-3.png)
+    ![2-4](formula/2-4.png)
+    ![2-5](formula/2-5.png)
 
 * attention weight：(shape: Ws1 da * 2u, Ws2 r * da  output r * 2 * hidden_size, linear wx+b)
 
-    ![2-6](http://github.com/whxf/PaperReading/blob/master/formula/2-6.png)
-    ![2-7](http://github.com/whxf/PaperReading/blob/master/formula/2-7.png)
+    ![2-6](formula/2-6.png)
+    ![2-7](formula/2-7.png)
 
 * last：之后拉平，fc layer全连接，之后label，+dropout batch norm
 
-    ![2-8](http://github.com/whxf/PaperReading/blob/master/formula/2-8.png)
+    ![2-8](formula/2-8.png)
 
 * penalization term：交叉熵
 
