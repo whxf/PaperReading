@@ -32,11 +32,10 @@
 公式1是```score```函数，可以理解为，在一条事件链中取第m个为```miss event```，也就是需要预测的，根据公式2计算待选event和链中其他node的```P```值，然后```log```求和，算出score，score小的更好。
 
 公式3是average ranking，就是整合整个数据集所有链计算得到的```f(e,c)```进行平均，Recall@N就是计算数据集中```f(e,c)```小于某个阈值的事件占比。
-    <a href="https://www.codecogs.com/eqnedit.php?latex={f(e,c)= \sum_{k=1}^{m}\log P(e|c_k) + \sum_{k=m+1}^{n}\log P(c_k|e)....(1)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{f(e,c)= \sum_{k=1}^{m}\log P(e|c_k) + \sum_{k=m+1}^{n}\log P(c_k|e)....(1)}" title="{f(e,c)= \sum_{k=1}^{m}\log P(e|c_k) + \sum_{k=m+1}^{n}\log P(c_k|e)....(1)}" /></a>
-    <a href="https://www.codecogs.com/eqnedit.php?latex={P(e_1|e_2) = \frac{C(e_1,e_2)}{C(e_2)}....(2)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{P(e_1|e_2) = \frac{C(e_1,e_2)}{C(e_2)}....(2)}" title="{P(e_1|e_2) = \frac{C(e_1,e_2)}{C(e_2)}....(2)}" /></a>
-    <a href="https://www.codecogs.com/eqnedit.php?latex={AverageRanking = \frac{1}{|C|}\sum_{c \in C} rank_{sys} (c)....(3)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{AverageRanking = \frac{1}{|C|}\sum_{c \in C} rank_{sys} (c)....(3)}" title="{AverageRanking = \frac{1}{|C|}\sum_{c \in C} rank_{sys} (c)....(3)}" /></a>
-    <a href="https://www.codecogs.com/eqnedit.php?latex={Recall@N = \frac{1}{|C|} |\lbrace c:c \in C \wedge rank_{sys} (c) \leq N \rbrace|....(4)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{Recall@N = \frac{1}{|C|} |\lbrace c:c \in C \wedge rank_{sys} (c) \leq N \rbrace|....(4)}" title="{Recall@N = \frac{1}{|C|} |\lbrace c:c \in C \wedge rank_{sys} (c) \leq N \rbrace|....(4)}" /></a>
-
+![1-1](http://github.com/whxf/PaperReading/blob/master/formula/1-1.png)
+![1-2](http://github.com/whxf/PaperReading/blob/master/formula/1-2.png)
+![1-3](http://github.com/whxf/PaperReading/blob/master/formula/1-3.png)
+![1-4](http://github.com/whxf/PaperReading/blob/master/formula/1-4.png)
 
 ## A Structured Self-Attentive Sentence Embedding
 
@@ -50,23 +49,24 @@
 
 * 词向量嵌入:(shape: n * d, d is embedding size, n is sentence length
 
-    <a href="https://www.codecogs.com/eqnedit.php?latex={S=(\bf w_1,w_2,...w_n)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{S=(\bf w_1,w_2,...w_n)}" title="{S=(\bf w_1,w_2,...w_n)}" /></a>
+    ![2-1](http://github.com/whxf/PaperReading/blob/master/formula/2-1.png)
 
 * 双向LSTM：将前后向结果拼接(shape: n * 2u, u is hidden size)
 
-    <a href="https://www.codecogs.com/eqnedit.php?latex={\overrightarrow{h_t}=\overrightarrow{LSTM}(w_t,\overrightarrow {h_{t-1}})}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{\overrightarrow{h_t}=\overrightarrow{LSTM}(w_t,\overrightarrow {h_{t-1}})}" title="{\overrightarrow{h_t}=\overrightarrow{LSTM}(w_t,\overrightarrow {h_{t-1}})}" /></a>
-    <a href="https://www.codecogs.com/eqnedit.php?latex={\overleftarrow{h_t}=\overleftarrow{LSTM}(w_t,\overleftarrow {h_{t-1}}))}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{\overleftarrow{h_t}=\overleftarrow{LSTM}(w_t,\overleftarrow {h_{t-1}})}" title="{\overleftarrow{h_t}=\overleftarrow{LSTM}(w_t,\overleftarrow {h_{t-1}})}" /></a>
-    <a href="https://www.codecogs.com/eqnedit.php?latex={h_{t} = [\overrightarrow {h_{t}},\overleftarrow {h_{t}}]}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{h_{t} = [\overrightarrow {h_{t}},\overleftarrow {h_{t}}]}" title="{h_{t} = [\overrightarrow {h_{t}},\overleftarrow {h_{t}}]}" /></a>
-    <a href="https://www.codecogs.com/eqnedit.php?latex={H=(\bf h_1,h_2,...h_n)}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{H=(\bf h_1,h_2,...h_n)}}" title="H=(\bf h_1,h_2,...h_n)}" /></a>
+    ![2-2](http://github.com/whxf/PaperReading/blob/master/formula/2-2.png)
+    ![2-3](http://github.com/whxf/PaperReading/blob/master/formula/2-3.png)
+    ![2-4](http://github.com/whxf/PaperReading/blob/master/formula/2-4.png)
+    ![2-5](http://github.com/whxf/PaperReading/blob/master/formula/2-5.png)
 
 * attention weight：(shape: Ws1 da * 2u, Ws2 r * da  output r * 2 * hidden_size, linear wx+b)
 
-    <a href="https://www.codecogs.com/eqnedit.php?latex={{\bf a}=softmax({\bf w_{s2}}tanh(W_{s1}H^T))}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{{\bf a}=softmax({\bf w_{s2}}tanh(W_{s1}H^T))}" title="{{\bf a}=softmax({\bf w_{s2}}tanh(W_{s1}H^T))}" /></a>
-    <a href="https://www.codecogs.com/eqnedit.php?latex={A=softmax({ W_{s2}}tanh(W_{s1}H^T))}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{A=softmax({ W_{s2}}tanh(W_{s1}H^T))}" title="{A=softmax({ W_{s2}}tanh(W_{s1}H^T))}" /></a>
+    ![2-6](http://github.com/whxf/PaperReading/blob/master/formula/2-6.png)
+    ![2-7](http://github.com/whxf/PaperReading/blob/master/formula/2-7.png)
 
 * last：之后拉平，fc layer全连接，之后label，+dropout batch norm
 
-    <a href="https://www.codecogs.com/eqnedit.php?latex={M=AH}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{M=AH}" title="{M=AH}" /></a>
+    ![2-8](http://github.com/whxf/PaperReading/blob/master/formula/2-8.png)
+
 * penalization term：交叉熵
 
 
@@ -107,4 +107,3 @@
         # return new_hidden_state
 ```
 
-<a href="https://www.codecogs.com/eqnedit.php?latex={}" target="_blank"><img src="https://latex.codecogs.com/gif.latex?{}" title="{}" /></a>
