@@ -216,3 +216,103 @@ Decoder: decoder也是由N（N=6）个完全相同的Layer组成，decoder中的
 对于decoder中的第一个多头注意力子层，***需要添加masking，确保预测位置i的时候仅仅依赖于位置小于i的输出。***
 
 层与层之间使用的Position-wise feed forward network。
+
+## 4. BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
+
+![4-1](formula/4-1.png)
+
+### Model Architecture
+
+bert model是多层双向transformer编码器。详细可参考[Attention is all you need](https://arxiv.org/pdf/1706.03762.pdf)。
+
+这里需要了解bert模型的相关参数：
+
+* L: number of layer, e.g. transformer block
+* H: hiddensize
+* A: self-attention head number
+
+bert模型有两个大小：
+
+* base：L=12，H=768，A=12，total parameters=340M
+* large：L=24，H=1024，A=16，total parameters=110M
+
+### Input Presentation
+
+![4-2](formula/4-2.png)
+
+输入是形式sentence pair，e.g. [question, answer]的pair，[A, B]。输入的表示由三部分构成（求和）：
+
+* segment embedding：句子embedding，因为前面提到训练数据都是由两个句子构成的，那么 ***每个句子有个句子整体的embedding项对应给每个单词***
+* token embedding：单词embedding,这个就是我们之前一直提到的 ***单词embedding***
+* position embedding：位置信息embedding，这是因为NLP中单词顺序是很重要的特征，需要在这里对 ***位置信息进行编码***
+
+有几个注意事项：
+
+* word pieces：数据中的有些单词会被分割为word piece，playing这类词在数据中会被表示为play和##ing，其中##是word piece的分割标记。
+* sequence length：sentence pair的总长度小于等于512 tokens
+* 特殊标志：[CLS]表示句子的开始, [SEP]表示句子的分割
+* 在预训练的时候，若使用单个句子则仅使用[A, B]中的A
+
+### Pre-training Task
+
+#### Masked LM
+
+任务简述：将句子中的一些词mask掉，然后预测mask的词语是什么。
+
+在这个任务中，对mask进行了特殊处理：
+
+* 对一个sequence中15%的word piece token进行随机mask
+* 使用[mask]替换原来的word，但并非所有的都用[mask]替换，替换规则是：
+  * 80%的mask使用[mask]标志进行替换
+  * 10%的mask用随机的其他token替代
+  * 10%的mask保持使用原本的token
+
+```text
+Input: the man went to the [MASK1] . he bought a [MASK2] of milk.
+Labels: [MASK1] = store; [MASK2] = gallon
+```
+
+这样做的意义是：训练过程大量看到[mask]标记，但是真正后面用的时候是不会有这个标记的，这会引导模型认为输出是针对[mask]这个标记的，但是实际使用又见不到这个标记，这自然会有问题。为了避免这个问题，Bert改造了一下，15%的被上天选中要执行[mask]替身这项光荣任务的单词中，只有80%真正被替换成[mask]标记，10%被狸猫换太子随机替换成另外一个单词，10%情况这个单词还待在原地不做改动。这就是Masked双向语音模型的具体做法。
+
+#### Next Sentence Prediction
+
+任务简述：对于[A, B]预测sentence B是不是sentence A的下一个句子，如果是label是 IsNextSentence， 如果不是标注为 NotNextSentence，负例的构造方式是，保留A然后在预料中随机找另一个句子作为B，正负例的比例是1:1
+
+```text
+Sentence A: the man went to the store .
+Sentence B: he bought a gallon of milk .
+Label: IsNextSentence
+```
+
+```text
+Sentence A: the man went to the store .
+Sentence B: penguins are flightless .
+Label: NotNextSentence
+```
+
+这样做的意义是：我们要求模型除了做上述的Masked语言模型任务外，附带再做个句子关系预测，判断第二个句子是不是真的是第一个句子的后续句子。之所以这么做，是考虑到很多NLP任务是句子关系判断任务，单词预测粒度的训练到不了句子关系这个层级，增加这个任务有助于下游句子关系判断任务。所以可以看到，它的预训练是个多任务过程。这也是Bert的一个创新。
+
+### Pre-training Procedure
+
+介绍了dataset，generate input sequence，task的运行，参数的设置等
+
+### Fine-tuning Procedure
+
+介绍了对分类问题的fine-tuning
+
+### 查缺补漏
+
+#### Position Embedding
+
+Position Embedding，也就是“位置向量”，将每个位置编号，然后每个编号对应一个向量，通过结合位置向量和词向量，就给每个词都引入了一定的位置信息，这样Attention就可以分辨出不同位置的词了。
+
+Position Embedding的公式如下所示，这里的意思是将为p的位置映射为一个 d_pos 维的位置向量，这个向量的第i个元素的数值就是 PE_i(p)。
+
+```math
+PE_{2i}(p) = sin(p/ 10000^{{2i} / {d_{pos}}} )
+PE_{2i+1}(p)=cos(p/10000^{{2i}/d_{pos}})
+```
+
+Position Embedding本身是一个绝对位置的信息，但在语言中，相对位置也很重要，Google选择前述的位置向量公式的一个重要原因是：由于我们有sin(α+β)=sinαcosβ+cosαsinβ以及cos(α+β)=cosαcosβ−sinαsinβ，这表明位置p+k的向量可以表示成位置p的向量的线性变换，这提供了表达相对位置信息的可能性。
+
+结合位置向量和词向量有几个可选方案，可以把它们拼接起来作为一个新向量，也可以把位置向量定义为跟词向量一样大小，然后两者加起来。
